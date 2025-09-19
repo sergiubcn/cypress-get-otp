@@ -1,0 +1,49 @@
+{
+  "name": "cypress-get-otp",
+  "version": "1.0.0",
+  "description": "Cypress custom command for generating OTP codes.",
+  "keywords": [
+    "auth",
+    "cypress",
+    "hotp",
+    "hmac",
+    "hash",
+    "password",
+    "security",
+    "time-based",
+    "otp",
+    "totp"
+  ],
+  "license": "MIT",
+  "author": "Sergiu Bacanu",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sergiubcn/cypress-get-otp.git"
+  },
+  "homepage": "https://github.com/sergiubcn/cypress-get-otp#readme",
+  "bugs": {
+    "url": "https://github.com/sergiubcn/cypress-get-otp/issues"
+  },
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "style": "prettier . --write"
+  },
+  "dependencies": {
+    "cypress": "^15.2.0",
+    "otpauth": "^9.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-cypress": "^5.1.1",
+    "prettier": "^3.6.2"
+  }
+}
