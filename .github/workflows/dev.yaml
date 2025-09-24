@@ -1,11 +1,11 @@
-name: Build and Test
+name: Run Cypress tests
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
