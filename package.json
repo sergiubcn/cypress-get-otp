@@ -1,6 +1,6 @@
 {
   "name": "cypress-get-otp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Cypress custom command for generating OTP codes.",
   "keywords": [
     "auth",
