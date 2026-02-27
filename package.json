@@ -41,7 +41,7 @@
     "otpauth": "^9.4.1"
   },
   "devDependencies": {
-    "eslint": "^9.36.0",
+    "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-cypress": "^5.1.1",
     "prettier": "^3.6.2"
