@@ -5,6 +5,9 @@ A Cypress custom command for generating OTP (One-Time Password) codes in your te
 ## Features
 
 - 🔐 Generate TOTP codes using secret keys
+- 📱 Generate QR codes for OTP setup flows
+- 🔑 Generate and validate backup codes for 2FA recovery
+- 🔗 Generate otpauth:// URIs for third-party integrations
 - ⚙️ Customizable options (digits, period, algorithm, etc.)
 - 🧪 TypeScript support with full type definitions
 - 📦 Lightweight with minimal dependencies. Based on https://github.com/hectorm/otpauth, which looks well maintained - kudos to the author and contributors.
@@ -82,6 +85,66 @@ Generates a TOTP code using the provided secret and options.
 
 A Cypress chainable that resolves to the generated OTP string.
 
+---
+
+### `cy.getOTPQRCode(secret, options?)`
+
+Generates a QR code for OTP setup flows. Returns base64 encoded image data.
+
+**Parameters:**
+
+- `secret` (string): The secret key for the OTP
+- `options` (object, optional): Configuration options including label and issuer
+
+**Returns:**
+
+A Cypress chainable that resolves to base64 encoded PNG image data.
+
+---
+
+### `cy.getBackupCodes(count?, options?)`
+
+Generates backup codes for 2FA recovery scenarios.
+
+**Parameters:**
+
+- `count` (number, optional): Number of backup codes to generate (default: 10)
+- `options` (object, optional): Configuration options for backup codes
+
+**Returns:**
+
+A Cypress chainable that resolves to an array of backup code strings.
+
+---
+
+### `cy.validateBackupCode(code, options?)`
+
+Validates the format of a backup code.
+
+**Parameters:**
+
+- `code` (string): The backup code to validate
+- `options` (object, optional): Validation options including digit length
+
+**Returns:**
+
+A Cypress chainable that resolves to a boolean indicating validity.
+
+---
+
+### `cy.getOTPURI(secret, options?)`
+
+Generates an otpauth:// URI for third-party authenticator integrations.
+
+**Parameters:**
+
+- `secret` (string): The secret key for the OTP
+- `options` (object, optional): Configuration options for the OTP
+
+**Returns:**
+
+A Cypress chainable that resolves to the otpauth:// URI string.
+
 ## Examples
 
 ### Testing 2FA Login Flow
@@ -106,6 +169,90 @@ describe("Two-Factor Authentication", () => {
     // Step 3: Verify successful login
     cy.url().should("include", "/dashboard");
     cy.get('[data-cy="welcome-message"]').should("be.visible");
+  });
+});
+```
+
+### Testing OTP Setup with QR Code
+
+```javascript
+describe("OTP Setup Flow", () => {
+  it("should display QR code for OTP setup", () => {
+    const secret = "G5HJRA652X3NOFSE";
+
+    // Generate QR code for user to scan
+    cy.getOTPQRCode(secret, {
+      label: "user@example.com",
+      issuer: "MyApp",
+    }).then((qrCode) => {
+      // Test that QR code is displayed correctly
+      cy.get('[data-cy="qr-code"]').should("have.attr", "src", qrCode);
+    });
+
+    // Test that manual entry option shows the secret
+    cy.get('[data-cy="manual-secret"]').should("contain", secret);
+  });
+});
+```
+
+### Testing Backup Code Recovery
+
+```javascript
+describe("Backup Code Recovery", () => {
+  it("should generate and validate backup codes", () => {
+    // Generate backup codes for testing
+    cy.getBackupCodes(5, { digits: 8 }).then((backupCodes) => {
+      expect(backupCodes).to.have.length(5);
+
+      // Test backup code validation
+      cy.validateBackupCode(backupCodes[0]).then((isValid) => {
+        expect(isValid).to.be.true;
+      });
+
+      // Test using backup code for login
+      cy.visit("/login");
+      cy.get('[data-cy="username"]').type("testuser");
+      cy.get('[data-cy="password"]').type("password123");
+      cy.get('[data-cy="login-button"]').click();
+
+      // Use backup code instead of OTP
+      cy.get('[data-cy="backup-code-input"]').type(backupCodes[0]);
+      cy.get('[data-cy="verify-backup-code"]').click();
+
+      cy.url().should("include", "/dashboard");
+    });
+  });
+});
+```
+
+### Testing Third-Party Authenticator Integration
+
+```javascript
+describe("Authenticator App Integration", () => {
+  it("should generate proper otpauth:// URI", () => {
+    const secret = "G5HJRA652X3NOFSE";
+
+    cy.getOTPURI(secret, {
+      label: "user@example.com",
+      issuer: "MyApp",
+      digits: 6,
+      period: 30,
+    }).then((uri) => {
+      // Test URI format
+      expect(uri).to.startWith("otpauth://totp/");
+      expect(uri).to.include("user@example.com");
+      expect(uri).to.include("MyApp");
+      expect(uri).to.include("digits=6");
+      expect(uri).to.include("period=30");
+
+      // Test that URI can be used to generate same OTP
+      cy.getOTP(secret).then((otp) => {
+        // Verify OTP from URI matches direct generation
+        // (This would typically be done by the authenticator app)
+        expect(otp).to.be.a("string");
+        expect(otp).to.have.length(6);
+      });
+    });
   });
 });
 ```

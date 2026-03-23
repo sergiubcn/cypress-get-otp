@@ -37,13 +37,14 @@
     "style": "prettier . --write"
   },
   "dependencies": {
-    "cypress": "^15.11.0",
-    "otpauth": "^9.5.0"
+    "cypress": "^15.12.0",
+    "otpauth": "^9.5.0",
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-cypress": "^6.0.0",
-    "prettier": "^3.6.2"
+    "eslint-plugin-cypress": "^6.2.0",
+    "prettier": "^3.8.1"
   }
 }

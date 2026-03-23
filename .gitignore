@@ -1,2 +1,7 @@
 # Dependencies
 node_modules/
+
+# Test artifacts
+cypress/screenshots/
+cypress/videos/
+
