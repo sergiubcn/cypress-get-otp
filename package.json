@@ -37,7 +37,7 @@
     "style": "prettier . --write"
   },
   "dependencies": {
-    "cypress": "^15.17.0",
+    "cypress": "^16.0.0",
     "otpauth": "^9.5.0",
     "qrcode": "^1.5.3"
   },
